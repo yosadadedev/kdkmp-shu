@@ -66,7 +66,7 @@ export function VotingChoiceSection({
 
   return (
     <Card padding="md" className={cn(isLoadingVote && 'opacity-70 pointer-events-none')}>
-      <div className="h-stack justify-between gap-2 mb-1.5">
+      {/* <div className="h-stack justify-between gap-2 mb-1.5">
         <div className="flex items-center gap-2 min-w-0">
           <div className="h-9 w-9 rounded-xl bg-brand-50 text-brand-600 inline-flex items-center justify-center shrink-0">
             <Gavel className="h-5 w-5" />
@@ -81,7 +81,7 @@ export function VotingChoiceSection({
           </div>
         </div>
         <BadgeTag tone="brand">1 Hak Suara</BadgeTag>
-      </div>
+      </div> */}
 
       <div className="card-padded mt-4 bg-surface-muted/70 border-border-light">
         <div className="h-stack gap-2 mb-2">

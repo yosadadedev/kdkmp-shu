@@ -29,7 +29,7 @@ export function DashboardHomePage() {
   return (
     <DashboardLayout>
       <div className="space-y-4 pb-6">
-        <div className="flex items-center justify-between gap-2">
+        {/* <div className="flex items-center justify-between gap-2">
           <h2 className="text-[15px] font-bold leading-6 text-text flex-1 min-w-0 truncate">
             Ringkasan SHU
           </h2>
@@ -43,7 +43,7 @@ export function DashboardHomePage() {
           >
             Refresh
           </Button>
-        </div>
+        </div> */}
 
         <ProfitSharingAmountCard record={record} isLoading={isRecordLoading} />
         <AlreadyVotedStatusCard voteStatus={voteStatus} isLoading={isVoteStatusLoading} />
