@@ -2,7 +2,6 @@ import { LogOut, RefreshCcw } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import { AvatarCircle } from '@presentation/components/ui/AvatarCircle'
 import { ConfirmationDialog } from '@presentation/components/ui/Dialog'
-import { BadgeTag } from '@presentation/components/ui/BadgeTag'
 import { useLogout } from '@application/hooks/auth/useLogout'
 import { useMyProfile } from '@application/hooks/profile/useMyProfile'
 import { USER_STRINGS } from '@presentation/constants/userFacingStrings'
@@ -73,7 +72,7 @@ export function DashboardLayout({ children, className }: DashboardLayoutProps) {
           </div>
         </div>
       </header>
-      <main className="flex-1 w-full screen-container pb-[calc(env(safe-area-inset-bottom,12px)+24px)] animate-slide-up">
+      <main className="flex-1 w-full screen-container pb-3 animate-slide-up">
         {children}
       </main>
       <ConfirmationDialog

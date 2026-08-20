@@ -4,7 +4,6 @@ import {
   ArrowUpRight,
   Wallet,
   PiggyBank,
-  TrendingUp,
   Coins,
   FileSpreadsheet,
   X,
@@ -199,21 +198,6 @@ export function MonthlyStatementCard({ statement, isFirst = false }: MonthlyStat
                 {USER_STRINGS.dashboard.monthlyStatementPeriod}
               </p>
             </div>
-          </div>
-          <div
-            className={cn(
-              'inline-flex items-center gap-1 px-2 py-1 rounded-xl border text-xs font-semibold',
-              isNetProfit
-                ? 'bg-success-soft border-success text-success-text'
-                : 'bg-warning-soft border-warning text-warning-text',
-            )}
-          >
-            {isNetProfit ? (
-              <TrendingUp className="h-3.5 w-3.5" />
-            ) : (
-              <ArrowDownRight className="h-3.5 w-3.5" />
-            )}
-            {isNetProfit ? 'Laba' : 'Rugi'}
           </div>
         </div>
 

@@ -1,0 +1,73 @@
+[
+  {
+    "key": "pendapatan-usaha",
+    "title": "PENDAPATAN USAHA",
+    "totalLabel": "Total Pendapatan Usaha",
+    "accounts": [
+      {
+        "code": "401.310.000",
+        "name": "Pendapatan Retail",
+        "value": 8455913565.98
+      },
+      { "code": "402.310.000", "name": "Pendapatan Klinik", "value": 0 },
+      { "code": "403.310.000", "name": "Pendapatan Sewa", "value": 0 },
+      {
+        "code": "404.310.000",
+        "name": "Penjualan Product Konsinyasi Lokal",
+        "value": 0
+      }
+    ]
+  },
+  {
+    "key": "hpp",
+    "title": "HPP",
+    "totalLabel": "Total HPP",
+    "accounts": [
+      {
+        "code": "501.310.000",
+        "name": "Harga Pokok Penjualan",
+        "value": -7096673087.06
+      },
+      { "code": "502.310.000", "name": "Biaya Overhead", "value": 0 },
+      { "code": "503.310.000", "name": "Biaya Operasional", "value": 0 },
+      { "code": "504.310.000", "name": "Biaya Hpp Lain-lain", "value": 0 },
+      {
+        "code": "505.310.000",
+        "name": "Beban Kerugian Lokal Supplier",
+        "value": 0
+      },
+      { "code": "506.310.000", "name": "Beban Kerugian Rusak", "value": 0 },
+      { "code": "507.310.000", "name": "Beban Kerugian Kehilangan", "value": 0 }
+    ]
+  },
+  {
+    "key": "beban-operasional",
+    "title": "BEBAN OPERASIONAL",
+    "totalLabel": "Total Beban Operasional",
+    "accounts": [
+      {
+        "code": "600.310.000",
+        "name": "Beban Umum dan administrasi",
+        "value": 0
+      }
+    ]
+  },
+  {
+    "key": "pendapatan-lain",
+    "title": "PENDAPATAN LAIN-LAIN",
+    "totalLabel": "Total Pendapatan Lain-lain",
+    "accounts": [
+      { "code": "701.310.000", "name": "Selisih Kas Lebih", "value": 69915915 },
+      { "code": "702.310.000", "name": "Pendapatan Lain-lain", "value": 0 }
+    ]
+  },
+  {
+    "key": "beban-lain",
+    "title": "BEBAN LAIN-LAIN",
+    "totalLabel": "Total Beban Lain-lain",
+    "accounts": [
+      { "code": "801.310.000", "name": "PPh Final", "value": 0 },
+      { "code": "802.310.000", "name": "Selisih Kas Kurang", "value": 0 }
+    ]
+  }
+]

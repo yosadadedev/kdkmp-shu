@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { RefreshCw } from 'lucide-react'
 import { DashboardLayout } from '@presentation/layouts/DashboardLayout'
 import { ProfitSharingAmountCard } from '@presentation/components/dashboard/ProfitSharingAmountCard'
@@ -7,69 +7,114 @@ import { VotingChoiceSection } from '@presentation/components/dashboard/VotingCh
 import { MemberInformationCard } from '@presentation/components/dashboard/MemberInformationCard'
 import { CooperativeInformationCard } from '@presentation/components/dashboard/CooperativeInformationCard'
 import { FinancialStatementsSection } from '@presentation/components/dashboard/FinancialStatementsSection'
+import { MemberVoteReceiptCard } from '@presentation/components/dashboard/MemberVoteReceiptCard'
+import { Divider } from '@presentation/components/ui/Divider'
 import { Button } from '@presentation/components/ui/Button'
 import { Skeleton, SkeletonCard } from '@presentation/components/ui/Skeleton'
+import { BottomNavBar, type BottomNavTab } from '@presentation/components/navigation/BottomNavBar'
 import { useMyProfile } from '@application/hooks/profile/useMyProfile'
 import { useCurrentProfitSharing } from '@application/hooks/profit-sharing/useCurrentProfitSharing'
 import { useMemberVoteStatus } from '@application/hooks/vote/useMemberVoteStatus'
+import { useCurrentVoteReceipt } from '@application/hooks/vote/useCurrentVoteReceipt'
 import { USER_STRINGS } from '@presentation/constants/userFacingStrings'
-import { Divider } from '@presentation/components/ui/Divider'
+import { cn } from '@presentation/utils/cn'
 
 export function DashboardHomePage() {
+  const [activeTab, setActiveTab] = useState<BottomNavTab>('voting')
   const { member, cooperativeUnit, isLoading: isProfileLoading, refetch: refetchProfile } = useMyProfile()
   const { record, isLoading: isRecordLoading, refetch: refetchShu } = useCurrentProfitSharing()
   const { voteStatus, isLoading: isVoteStatusLoading, refetch: refetchVote } = useMemberVoteStatus()
+  const { receipt, isLoading: isReceiptLoading, refetch: refetchReceipt } = useCurrentVoteReceipt()
 
   const refetchAll = useCallback(async () => {
-    await Promise.allSettled([refetchProfile(), refetchShu(), refetchVote()])
-  }, [refetchProfile, refetchShu, refetchVote])
+    await Promise.allSettled([refetchProfile(), refetchShu(), refetchVote(), refetchReceipt()])
+  }, [refetchProfile, refetchShu, refetchVote, refetchReceipt])
 
   const isAnyLoading = isProfileLoading || isRecordLoading
 
+  const hasVoted = useMemo(() => voteStatus?.hasMemberVoted ?? false, [voteStatus])
+
   return (
     <DashboardLayout>
-      <div className="space-y-4 pb-6">
+      <div className="space-y-4 pb-[130px]">
         {/* <div className="flex items-center justify-between gap-2">
           <h2 className="text-[15px] font-bold leading-6 text-text flex-1 min-w-0 truncate">
-            Ringkasan SHU
+            {activeTab === 'reports' && USER_STRINGS.dashboard.sectionReports}
+            {activeTab === 'voting' && USER_STRINGS.dashboard.sectionShuAmount}
+            {activeTab === 'profile' && USER_STRINGS.dashboard.sectionMemberData}
           </h2>
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={() => void refetchAll()}
-            isLoading={isAnyLoading}
+            isLoading={isAnyLoading && isReceiptLoading}
             leftIcon={<RefreshCw className="h-4 w-4" />}
           >
             Refresh
           </Button>
         </div> */}
 
-        <ProfitSharingAmountCard record={record} isLoading={isRecordLoading} />
-        <AlreadyVotedStatusCard voteStatus={voteStatus} isLoading={isVoteStatusLoading} />
-        <VotingChoiceSection
-          profitSharingRecord={record}
-          voteStatus={voteStatus}
-          isLoadingRecord={isRecordLoading}
-          isLoadingVote={isVoteStatusLoading}
-        />
+        {activeTab === 'reports' ? (
+          <div className={cn(isAnyLoading && !record ? 'opacity-70 pointer-events-none' : '')}>
+            <FinancialStatementsSection />
+          </div>
+        ) : null}
 
-        <Divider spacing="md" label={USER_STRINGS.dashboard.profileCardTitle} />
-        <MemberInformationCard
-          member={member}
-          cooperativeUnit={cooperativeUnit}
-          isLoading={isProfileLoading}
-        />
+        {activeTab === 'voting' ? (
+          <div className="space-y-4">
+            <ProfitSharingAmountCard record={record} isLoading={isRecordLoading} />
+            <AlreadyVotedStatusCard voteStatus={voteStatus} isLoading={isVoteStatusLoading} />
 
-        {/* Data KDKMP */}
-        <Divider spacing="md" label="Data KDKMP" />
-        <CooperativeInformationCard
-          cooperativeUnit={cooperativeUnit}
-          isLoading={isProfileLoading}
-        />
+            {hasVoted ? (
+              <>
+                <MemberVoteReceiptCard
+                  receipt={receipt}
+                  isLoading={isReceiptLoading}
+                />
+                <p className="text-[12px] leading-5 text-text-muted text-center px-2">
+                  {USER_STRINGS.dashboard.votingVotedTabHint}
+                </p>
+              </>
+            ) : (
+              <VotingChoiceSection
+                profitSharingRecord={record}
+                voteStatus={voteStatus}
+                isLoadingRecord={isRecordLoading}
+                isLoadingVote={isVoteStatusLoading}
+              />
+            )}
+          </div>
+        ) : null}
 
-        <Divider spacing="md" label="Laporan Keuangan" />
-        <FinancialStatementsSection />
+        {activeTab === 'profile' ? (
+          <div className="space-y-4">
+            <ProfitSharingAmountCard record={record} isLoading={isRecordLoading} />
+
+            <Divider spacing="md" label={USER_STRINGS.dashboard.sectionMemberData} />
+            <MemberInformationCard
+              member={member}
+              cooperativeUnit={cooperativeUnit}
+              isLoading={isProfileLoading}
+            />
+
+            <Divider spacing="md" label={USER_STRINGS.dashboard.sectionCooperativeData} />
+            <CooperativeInformationCard
+              cooperativeUnit={cooperativeUnit}
+              isLoading={isProfileLoading}
+            />
+
+            {hasVoted ? (
+              <>
+                <Divider spacing="md" label="Bukti Voting" />
+                <MemberVoteReceiptCard
+                  receipt={receipt}
+                  isLoading={isReceiptLoading}
+                />
+              </>
+            ) : null}
+          </div>
+        ) : null}
 
         {isAnyLoading && !member && !record ? (
           <div className="space-y-3" aria-hidden>
@@ -78,6 +123,8 @@ export function DashboardHomePage() {
           </div>
         ) : null}
       </div>
+
+      <BottomNavBar activeTab={activeTab} onTabChange={setActiveTab} hasVoted={hasVoted} />
     </DashboardLayout>
   )
 }

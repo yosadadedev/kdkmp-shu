@@ -71,6 +71,12 @@ export const formatDateLongId = (isoOrDate: string | Date): string => {
 export const formatMonthLabelId = (monthNumber1To12: number, year: number): string =>
   `${MONTH_NAMES_SHORT_ID[monthNumber1To12 - 1]} ${year}`
 
+export const formatMonthYearFullId = (isoOrDate: string | Date): string => {
+  const d = typeof isoOrDate === 'string' ? new Date(isoOrDate) : isoOrDate
+  if (Number.isNaN(d.getTime())) return '-'
+  return `${MONTH_NAMES_ID[d.getMonth()]} ${d.getFullYear()}`
+}
+
 export const formatCountdownMmSs = (totalSeconds: number): string => {
   const safe = Math.max(0, Math.floor(totalSeconds))
   const mm = Math.floor(safe / 60)

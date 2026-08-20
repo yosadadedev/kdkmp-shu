@@ -1,10 +1,8 @@
-import { TrendingUp, Calendar, BadgeCheck } from 'lucide-react'
+import { TrendingUp, Calendar } from 'lucide-react'
 import { Card } from '@presentation/components/ui/Card'
 import { RupiahText } from '@presentation/components/ui/RupiahText'
-import { BadgeTag } from '@presentation/components/ui/BadgeTag'
-import { formatDateLongId, formatPercentage } from '@presentation/utils/formatters'
+import { formatMonthYearFullId } from '@presentation/utils/formatters'
 import { USER_STRINGS } from '@presentation/constants/userFacingStrings'
-import { ProfitSharingStatus } from '@domain/enums/ProfitSharingStatus'
 import type { ProfitSharingRecord } from '@domain/entities/ProfitSharingRecord'
 import { cn } from '@presentation/utils/cn'
 import { Skeleton } from '@presentation/components/ui/Skeleton'
@@ -12,31 +10,6 @@ import { Skeleton } from '@presentation/components/ui/Skeleton'
 export interface ProfitSharingAmountCardProps {
   record: ProfitSharingRecord | null
   isLoading: boolean
-}
-
-const renderStatusBadge = (status: ProfitSharingStatus, voted: boolean) => {
-  if (voted) {
-    return (
-      <BadgeTag tone="success">
-        <BadgeCheck className="h-3.5 w-3.5" />
-        {USER_STRINGS.dashboard.profitSharingCardStatusVoted}
-      </BadgeTag>
-    )
-  }
-  switch (status) {
-    case ProfitSharingStatus.VOTING_OPEN:
-      return <BadgeTag tone="brand">{USER_STRINGS.dashboard.profitSharingCardStatusOpen}</BadgeTag>
-    case ProfitSharingStatus.APPROVED:
-      return <BadgeTag tone="success">{USER_STRINGS.dashboard.profitSharingCardStatusApproved}</BadgeTag>
-    case ProfitSharingStatus.DISTRIBUTED:
-      return <BadgeTag tone="info">{USER_STRINGS.dashboard.profitSharingCardStatusDistributed}</BadgeTag>
-    case ProfitSharingStatus.DRAFT:
-      return <BadgeTag tone="muted">Penyusunan Laporan</BadgeTag>
-    case ProfitSharingStatus.REJECTED:
-      return <BadgeTag tone="danger">Belum disetujui anggota</BadgeTag>
-    default:
-      return null
-  }
 }
 
 export function ProfitSharingAmountCard({ record, isLoading }: ProfitSharingAmountCardProps) {
@@ -56,13 +29,11 @@ export function ProfitSharingAmountCard({ record, isLoading }: ProfitSharingAmou
     )
   }
 
-  const isVotingOpen = record.status === ProfitSharingStatus.VOTING_OPEN
-
   return (
     <Card
       variant="brand"
       padding="lg"
-      className={cn('relative overflow-hidden animate-scale-pop', isVotingOpen && 'ring-1 ring-brand-100/40')}
+      className={cn('relative overflow-hidden animate-scale-pop')}
     >
       <div className="absolute -right-6 -top-10 h-32 w-32 rounded-full bg-white/10 blur-2xl pointer-events-none" aria-hidden />
       <div className="absolute left-10 bottom-0 h-28 w-28 rounded-full bg-white/5 blur-2xl pointer-events-none" aria-hidden />
@@ -80,7 +51,6 @@ export function ProfitSharingAmountCard({ record, isLoading }: ProfitSharingAmou
             </p>
           </div>
         </div>
-        {/* <div className="shrink-0">{renderStatusBadge(record.status, false)}</div> */}
       </div>
       <div className="relative mb-5">
         <RupiahText
@@ -90,21 +60,14 @@ export function ProfitSharingAmountCard({ record, isLoading }: ProfitSharingAmou
           tone="default"
           className="!text-white"
         />
-        {/* <p className="mt-2 text-[12px] leading-5 text-white/80">
-          Bagian anggota: {formatPercentage(record.memberSharePercentage)} · Total anggota aktif{' '}
-          <span className="font-semibold">{record.totalActiveMembers.toLocaleString('id-ID')}</span>
-        </p> */}
       </div>
       <div className="relative h-stack justify-between pt-3 border-t border-white/15">
         <div className="h-stack gap-2 text-[12px] text-white/85">
           <Calendar className="h-4 w-4" />
-          <span>
-            {formatDateLongId(record.periodStartDateIso)} – {formatDateLongId(record.periodEndDateIso)}
+          <span className="font-medium">
+            {formatMonthYearFullId(record.periodStartDateIso)} – {formatMonthYearFullId(record.periodEndDateIso)}
           </span>
         </div>
-        {/* <BadgeTag tone="brand" className="!bg-white/15 !border-white/25 !text-white">
-          {formatPercentage(record.memberSharePercentage)} Anggota
-        </BadgeTag> */}
       </div>
     </Card>
   )
