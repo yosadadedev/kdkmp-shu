@@ -9,6 +9,7 @@ import { useCurrentProfitSharing } from '../profit-sharing/useCurrentProfitShari
 
 export interface UseMonthlyStatementsResult {
   statements: MonthlyFinancialStatement[]
+  cooperativeUnitName: string | null
   isLoading: boolean
   errorCode: ErrorCode | null
   refetch: () => Promise<void>
@@ -44,5 +45,11 @@ export function useMonthlyStatements(): UseMonthlyStatementsResult {
     void refetch()
   }, [refetch])
 
-  return { statements, isLoading, errorCode, refetch }
+  return {
+    statements,
+    cooperativeUnitName: cooperativeUnit?.branchName ?? null,
+    isLoading,
+    errorCode,
+    refetch,
+  }
 }

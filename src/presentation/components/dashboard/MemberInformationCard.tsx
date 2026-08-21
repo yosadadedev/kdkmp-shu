@@ -1,11 +1,9 @@
 import { useMemo } from 'react'
-import { FileCheck2, MapPin, Building2 } from 'lucide-react'
+import { MapPin, Building2 } from 'lucide-react'
 import { Card } from '@presentation/components/ui/Card'
 import { InfoRow } from '@presentation/components/ui/InfoRow'
-import { BadgeTag } from '@presentation/components/ui/BadgeTag'
 import { AvatarCircle } from '@presentation/components/ui/AvatarCircle'
 import { USER_STRINGS } from '@presentation/constants/userFacingStrings'
-import { MemberActiveStatus } from '@domain/enums/MemberActiveStatus'
 import type { Member } from '@domain/entities/Member'
 import type { CooperativeUnit } from '@domain/entities/CooperativeUnit'
 import { Skeleton } from '@presentation/components/ui/Skeleton'
@@ -14,32 +12,6 @@ export interface MemberInformationCardProps {
   member: Member | null
   cooperativeUnit: CooperativeUnit | null
   isLoading: boolean
-}
-
-const statusLabel = (status: MemberActiveStatus): string => {
-  switch (status) {
-    case MemberActiveStatus.ACTIVE:
-      return USER_STRINGS.dashboard.infoStatusActive
-    case MemberActiveStatus.INACTIVE:
-      return USER_STRINGS.dashboard.infoStatusInactive
-    case MemberActiveStatus.SUSPENDED:
-      return USER_STRINGS.dashboard.infoStatusSuspended
-    default:
-      return '-'
-  }
-}
-
-const statusTone = (status: MemberActiveStatus): 'success' | 'danger' | 'muted' => {
-  switch (status) {
-    case MemberActiveStatus.ACTIVE:
-      return 'success'
-    case MemberActiveStatus.INACTIVE:
-      return 'muted'
-    case MemberActiveStatus.SUSPENDED:
-      return 'danger'
-    default:
-      return 'muted'
-  }
 }
 
 export function MemberInformationCard({ member, cooperativeUnit, isLoading }: MemberInformationCardProps) {
@@ -96,25 +68,14 @@ export function MemberInformationCard({ member, cooperativeUnit, isLoading }: Me
       ) : (
         <>
           <div className="flex items-start justify-between gap-3">
-            <div className="flex items-start gap-3 min-w-0 flex-1">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
               <AvatarCircle fullName={member.fullName} size="xl" />
               <div className="min-w-0 flex-1 pt-1">
-                <h3 className="text-[17px] font-bold leading-6 text-text truncate mb-1">
+                <h3 className="text-[17px] font-bold leading-6 text-text truncate">
                   {member.fullName}
                 </h3>
-                <div className="h-stack gap-1.5 text-xs text-text-muted">
-                  <FileCheck2 className="h-3.5 w-3.5" />
-                  <span className="truncate">{member.nationalIdNikMasked}</span>
-                </div>
-                <div className="h-stack gap-1.5 text-xs text-text-muted mt-0.5">
-                  <Building2 className="h-3.5 w-3.5 shrink-0" />
-                  <span className="truncate">{cooperativeUnit?.branchName}</span>
-                </div>
               </div>
             </div>
-            <BadgeTag tone={statusTone(member.activeStatus)} size="md">
-              {statusLabel(member.activeStatus)}
-            </BadgeTag>
           </div>
 
           <div className="mt-4">

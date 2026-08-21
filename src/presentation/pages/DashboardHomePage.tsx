@@ -1,5 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
-import { RefreshCw } from 'lucide-react'
+import { useMemo, useState } from 'react'
 import { DashboardLayout } from '@presentation/layouts/DashboardLayout'
 import { ProfitSharingAmountCard } from '@presentation/components/dashboard/ProfitSharingAmountCard'
 import { AlreadyVotedStatusCard } from '@presentation/components/dashboard/AlreadyVotedStatusCard'
@@ -9,7 +8,6 @@ import { CooperativeInformationCard } from '@presentation/components/dashboard/C
 import { FinancialStatementsSection } from '@presentation/components/dashboard/FinancialStatementsSection'
 import { MemberVoteReceiptCard } from '@presentation/components/dashboard/MemberVoteReceiptCard'
 import { Divider } from '@presentation/components/ui/Divider'
-import { Button } from '@presentation/components/ui/Button'
 import { Skeleton, SkeletonCard } from '@presentation/components/ui/Skeleton'
 import { BottomNavBar, type BottomNavTab } from '@presentation/components/navigation/BottomNavBar'
 import { useMyProfile } from '@application/hooks/profile/useMyProfile'
@@ -21,14 +19,10 @@ import { cn } from '@presentation/utils/cn'
 
 export function DashboardHomePage() {
   const [activeTab, setActiveTab] = useState<BottomNavTab>('voting')
-  const { member, cooperativeUnit, isLoading: isProfileLoading, refetch: refetchProfile } = useMyProfile()
-  const { record, isLoading: isRecordLoading, refetch: refetchShu } = useCurrentProfitSharing()
-  const { voteStatus, isLoading: isVoteStatusLoading, refetch: refetchVote } = useMemberVoteStatus()
-  const { receipt, isLoading: isReceiptLoading, refetch: refetchReceipt } = useCurrentVoteReceipt()
-
-  const refetchAll = useCallback(async () => {
-    await Promise.allSettled([refetchProfile(), refetchShu(), refetchVote(), refetchReceipt()])
-  }, [refetchProfile, refetchShu, refetchVote, refetchReceipt])
+  const { member, cooperativeUnit, isLoading: isProfileLoading } = useMyProfile()
+  const { record, isLoading: isRecordLoading } = useCurrentProfitSharing()
+  const { voteStatus, isLoading: isVoteStatusLoading } = useMemberVoteStatus()
+  const { receipt, isLoading: isReceiptLoading } = useCurrentVoteReceipt()
 
   const isAnyLoading = isProfileLoading || isRecordLoading
 

@@ -1,0 +1,12 @@
+1. Bulan Tahun Periode Di besarkan font nya -> ok
+2. Laporan - Laba Bersih buat full 
+3. Alokasi SHU di buat general (tetep 1 line)
+4. Card SHU di profile hapus aja di menu profile
+5. Header - Avatar ganti logo KDKMP, nama user hapus, nama KDKMP buat Besar
+6. Modal Sukses - Tanda terima section hapus
+7. Modal Sukses - tombol Kembali ke Halaman Utama hapus
+8. Modal Sukses - Tombol Kembali ke Dashboard ganti logout 
+9. Modal Sukses - Header hapus
+10. Modal Sukses - Tampilkan informasi KDKMP terkait
+11. Onboarding - VOting SHU KDKMP terkait, flow dll
+12. faq di profile screen

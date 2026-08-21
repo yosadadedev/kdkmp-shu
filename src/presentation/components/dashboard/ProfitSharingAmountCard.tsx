@@ -62,9 +62,9 @@ export function ProfitSharingAmountCard({ record, isLoading }: ProfitSharingAmou
         />
       </div>
       <div className="relative h-stack justify-between pt-3 border-t border-white/15">
-        <div className="h-stack gap-2 text-[12px] text-white/85">
-          <Calendar className="h-4 w-4" />
-          <span className="font-medium">
+        <div className="h-stack gap-2 text-[14px] text-white/95">
+          <Calendar className="h-4.5 w-4.5" />
+          <span className="font-bold">
             {formatMonthYearFullId(record.periodStartDateIso)} – {formatMonthYearFullId(record.periodEndDateIso)}
           </span>
         </div>

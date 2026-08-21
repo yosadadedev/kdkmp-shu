@@ -1,11 +1,11 @@
-import { useState, type ReactNode } from 'react'
+import { useState, useRef, type ReactNode } from 'react'
 import {
   ArrowDownRight,
   ArrowUpRight,
   Wallet,
   PiggyBank,
-  Coins,
   FileSpreadsheet,
+  Download,
   X,
 } from 'lucide-react'
 import type { MonthlyFinancialStatement } from '@domain/entities/MonthlyFinancialStatement'
@@ -15,106 +15,18 @@ import { Button } from '@presentation/components/ui/Button'
 import { USER_STRINGS } from '@presentation/constants/userFacingStrings'
 import { cn } from '@presentation/utils/cn'
 import { formatRupiah } from '@presentation/utils/formatters'
+import {
+  generateMonthlyPdfReport,
+  type GenerateMonthlyPdfParams,
+} from '@presentation/utils/pdf'
+import {
+  computePnlDerivedFromJson,
+  type PnlSection,
+} from '@presentation/utils/pnlComputation'
 
 export interface MonthlyStatementCardProps {
   statement: MonthlyFinancialStatement
   isFirst?: boolean
-}
-
-interface PnlRowType {
-  label: string
-  cents: number
-  negate?: boolean
-  indent?: boolean
-  total?: boolean
-}
-
-interface PnlSection {
-  title: string
-  rows: PnlRowType[]
-  totalCents: number
-  totalLabel: string
-  negateTotal?: boolean
-}
-
-function buildPnlSections(statement: MonthlyFinancialStatement): PnlSection[] {
-  const revenueTotal =
-    statement.revenue.retailCents +
-    statement.revenue.clinicCents +
-    statement.revenue.rentalCents +
-    statement.revenue.localConsignmentCents
-
-  const hppTotal =
-    statement.hpp.costOfGoodsSoldCents +
-    statement.hpp.overheadCents +
-    statement.hpp.operationalCents +
-    statement.hpp.otherHppCents +
-    statement.hpp.localSupplierLossCents +
-    statement.hpp.damagedGoodsLossCents +
-    statement.hpp.lostGoodsLossCents
-
-  const opExpTotal = statement.operationalExpenses.generalAndAdministrativeCents
-
-  const otherIncomeTotal = statement.otherIncome.cashOverageCents + statement.otherIncome.otherIncomeCents
-
-  const otherExpTotal = statement.otherExpenses.finalIncomeTaxCents + statement.otherExpenses.cashShortageCents
-
-  return [
-    {
-      title: USER_STRINGS.dashboard.pnlSectionRevenue,
-      totalLabel: USER_STRINGS.dashboard.pnlRevenueTotal,
-      totalCents: revenueTotal,
-      rows: [
-        { label: USER_STRINGS.dashboard.pnlRevenueRetail, cents: statement.revenue.retailCents, indent: true },
-        { label: USER_STRINGS.dashboard.pnlRevenueClinic, cents: statement.revenue.clinicCents, indent: true },
-        { label: USER_STRINGS.dashboard.pnlRevenueRental, cents: statement.revenue.rentalCents, indent: true },
-        { label: USER_STRINGS.dashboard.pnlRevenueConsignment, cents: statement.revenue.localConsignmentCents, indent: true },
-      ],
-    },
-    {
-      title: USER_STRINGS.dashboard.pnlSectionHpp,
-      totalLabel: USER_STRINGS.dashboard.pnlHppTotal,
-      totalCents: hppTotal,
-      negateTotal: true,
-      rows: [
-        { label: USER_STRINGS.dashboard.pnlHppCogs, cents: statement.hpp.costOfGoodsSoldCents, indent: true, negate: true },
-        { label: USER_STRINGS.dashboard.pnlHppOverhead, cents: statement.hpp.overheadCents, indent: true, negate: true },
-        { label: USER_STRINGS.dashboard.pnlHppOperational, cents: statement.hpp.operationalCents, indent: true, negate: true },
-        { label: USER_STRINGS.dashboard.pnlHppOther, cents: statement.hpp.otherHppCents, indent: true, negate: true },
-        { label: USER_STRINGS.dashboard.pnlHppLocalSupplierLoss, cents: statement.hpp.localSupplierLossCents, indent: true, negate: true },
-        { label: USER_STRINGS.dashboard.pnlHppDamagedLoss, cents: statement.hpp.damagedGoodsLossCents, indent: true, negate: true },
-        { label: USER_STRINGS.dashboard.pnlHppLostLoss, cents: statement.hpp.lostGoodsLossCents, indent: true, negate: true },
-      ],
-    },
-    {
-      title: USER_STRINGS.dashboard.pnlSectionOperatingExpenses,
-      totalLabel: USER_STRINGS.dashboard.pnlOpExpTotal,
-      totalCents: opExpTotal,
-      negateTotal: true,
-      rows: [
-        { label: USER_STRINGS.dashboard.pnlOpExpGeneralAdmin, cents: statement.operationalExpenses.generalAndAdministrativeCents, indent: true, negate: true },
-      ],
-    },
-    {
-      title: USER_STRINGS.dashboard.pnlSectionOtherIncome,
-      totalLabel: USER_STRINGS.dashboard.pnlOtherIncomeTotal,
-      totalCents: otherIncomeTotal,
-      rows: [
-        { label: USER_STRINGS.dashboard.pnlOtherIncomeCashOverage, cents: statement.otherIncome.cashOverageCents, indent: true },
-        { label: USER_STRINGS.dashboard.pnlOtherIncomeMisc, cents: statement.otherIncome.otherIncomeCents, indent: true },
-      ],
-    },
-    {
-      title: USER_STRINGS.dashboard.pnlSectionOtherExpenses,
-      totalLabel: USER_STRINGS.dashboard.pnlOtherExpTotal,
-      totalCents: otherExpTotal,
-      negateTotal: true,
-      rows: [
-        { label: USER_STRINGS.dashboard.pnlOtherExpIncomeTax, cents: statement.otherExpenses.finalIncomeTaxCents, indent: true, negate: true },
-        { label: USER_STRINGS.dashboard.pnlOtherExpCashShortage, cents: statement.otherExpenses.cashShortageCents, indent: true, negate: true },
-      ],
-    },
-  ]
 }
 
 const nominal = (cents: number, negate = false): string => {
@@ -178,11 +90,36 @@ function PnlDetailTable({ sections }: { sections: PnlSection[] }): ReactNode {
   )
 }
 
-export function MonthlyStatementCard({ statement, isFirst = false }: MonthlyStatementCardProps) {
+export function MonthlyStatementCard({
+  statement,
+  cooperativeUnitName,
+  isFirst = false,
+}: MonthlyStatementCardProps & { cooperativeUnitName?: string | null }) {
   const [showDetail, setShowDetail] = useState<boolean>(false)
-  const isNetProfit = statement.netProfitCents >= 0
+  const [isDownloading, setIsDownloading] = useState<boolean>(false)
+  const { sections, summary } = computePnlDerivedFromJson(statement)
+  const pdfContentRef = useRef<HTMLDivElement | null>(null)
 
-  const sections = buildPnlSections(statement)
+  const handleDownloadPdf = async () => {
+    if (isDownloading || !pdfContentRef.current) return
+    setIsDownloading(true)
+    try {
+      const params: GenerateMonthlyPdfParams = {
+        contentEl: pdfContentRef.current,
+        periodLabel: statement.periodLabel,
+        cooperativeUnitName,
+        operatingRevenueCents: summary.operatingRevenueTotalCents,
+        operatingExpensesCents: summary.operatingExpensesTotalCents,
+        netProfitCents: Math.abs(summary.netProfitCents),
+      }
+      await generateMonthlyPdfReport(params)
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('[MonthlyStatementCard] Failed to generate PDF:', err)
+    } finally {
+      setIsDownloading(false)
+    }
+  }
 
   return (
     <>
@@ -205,49 +142,127 @@ export function MonthlyStatementCard({ statement, isFirst = false }: MonthlyStat
           <div className="rounded-xl bg-surface-muted p-3 space-y-1">
             <div className="h-stack gap-1 text-[11px] text-text-muted">
               <PiggyBank className="h-3.5 w-3.5" />
-              {USER_STRINGS.dashboard.monthlySavingsIn}
+              {USER_STRINGS.dashboard.shuAllocationRevenue}
             </div>
-            <RupiahText cents={statement.totalSavingsInCents} size="sm" />
+            <RupiahText cents={summary.operatingRevenueTotalCents} size="sm" />
           </div>
           <div className="rounded-xl bg-surface-muted p-3 space-y-1">
             <div className="h-stack gap-1 text-[11px] text-text-muted">
               <ArrowDownRight className="h-3.5 w-3.5 text-link" />
-              {USER_STRINGS.dashboard.monthlyLoanOut}
+              {USER_STRINGS.dashboard.shuAllocationOperatingExpense}
             </div>
-            <RupiahText cents={statement.totalLoanDisbursementCents} size="sm" />
+            <RupiahText cents={summary.operatingExpensesTotalCents} size="sm" />
           </div>
-          <div className="rounded-xl bg-surface-muted p-3 space-y-1">
+          <div className="col-span-2 rounded-xl bg-surface-muted p-3 space-y-1">
             <div className="h-stack gap-1 text-[11px] text-text-muted">
               <ArrowUpRight className="h-3.5 w-3.5 text-success-text" />
-              {USER_STRINGS.dashboard.monthlyLoanIn}
-            </div>
-            <RupiahText cents={statement.totalLoanRepaymentCents} size="sm" />
-          </div>
-          <div className="rounded-xl bg-surface-muted p-3 space-y-1">
-            <div className="h-stack gap-1 text-[11px] text-text-muted">
-              <Coins className="h-3.5 w-3.5 text-brand-600" />
-              {USER_STRINGS.dashboard.monthlyNetProfit}
+              {USER_STRINGS.dashboard.shuAllocationNetProfit}
             </div>
             <RupiahText
-              cents={statement.netProfitCents}
+              cents={Math.abs(summary.netProfitCents)}
               size="sm"
-              tone={isNetProfit ? 'success' : 'danger'}
+              tone="success"
               showZeroAsDash={false}
             />
           </div>
         </div>
 
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          isBlock
-          onClick={() => setShowDetail(true)}
-          leftIcon={<FileSpreadsheet className="h-[18px] w-[18px]" />}
-        >
-          {USER_STRINGS.dashboard.pnlCtaDetail}
-        </Button>
+        <div className="grid grid-cols-1 gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            isBlock
+            onClick={() => setShowDetail(true)}
+            leftIcon={<FileSpreadsheet className="h-[18px] w-[18px]" />}
+          >
+            {USER_STRINGS.dashboard.pnlCtaDetail}
+          </Button>
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            isBlock
+            isLoading={isDownloading}
+            loadingText={USER_STRINGS.dashboard.pnlCtaDownloading}
+            onClick={handleDownloadPdf}
+            leftIcon={<Download className="h-[18px] w-[18px]" />}
+          >
+            {USER_STRINGS.dashboard.pnlCtaDownloadPdf}
+          </Button>
+        </div>
       </Card>
+
+      <div className="hidden" aria-hidden="true">
+        <div ref={pdfContentRef}>
+          <div className="w-[780px] bg-white p-6 font-sans">
+            <div className="mb-4">
+              <div className="text-[22px] font-bold text-[#1C1C1E] mb-1">
+                {USER_STRINGS.dashboard.pnlDownloadTitle}
+              </div>
+              <div className="text-[13px] text-[#525258]">
+                Periode: <span className="font-semibold">{statement.periodLabel}</span>
+                {cooperativeUnitName ? (
+                  <>
+                    <span className="mx-2 text-[#D1D1D6]">|</span>
+                    Unit: <span className="font-semibold">{cooperativeUnitName}</span>
+                  </>
+                ) : null}
+              </div>
+            </div>
+            <div className="rounded-2xl overflow-hidden border border-[#E8E8EC]">
+              <div className="grid grid-cols-[1fr_auto] bg-[#C8102E] text-white px-4 py-3 text-[13px] font-bold items-center">
+                <span>{USER_STRINGS.dashboard.pnlHeaderAccountName}</span>
+                <span className="text-right tabular-nums pl-3 shrink-0">
+                  {USER_STRINGS.dashboard.pnlHeaderNominal}
+                </span>
+              </div>
+              <div className="divide-y divide-[#E8E8EC] bg-white">
+                {sections.map((section, sIdx) => (
+                  <div key={`pdf-section-${sIdx}`}>
+                    <div className="grid grid-cols-[1fr_auto] bg-[#F4F4F5] px-4 py-2.5 text-[13px] font-bold text-[#1C1C1E] items-center">
+                      <span>{section.title}</span>
+                      <span />
+                    </div>
+                    <div className="divide-y divide-[#F2F2F4]">
+                      {section.rows.map((row, rIdx) => (
+                        <div
+                          key={`pdf-row-${sIdx}-${rIdx}`}
+                          className={cn(
+                            'grid grid-cols-[1fr_auto] px-4 py-2 text-[12.5px] leading-5 items-center',
+                            row.indent ? 'pl-7' : 'pl-4',
+                          )}
+                        >
+                          <span className="text-[#2C2C2E]">{row.label}</span>
+                          <span className="text-right tabular-nums pl-3 shrink-0 text-[#1C1C1E]">
+                            {nominal(row.cents, row.negate)}
+                          </span>
+                        </div>
+                      ))}
+                      <div className="grid grid-cols-[1fr_auto] px-4 py-2.5 text-[13px] font-bold leading-5 items-center bg-[#F9F9FB]">
+                        <span className="text-[#1C1C1E]">{section.totalLabel}</span>
+                        <span className="text-right tabular-nums pl-3 shrink-0 text-[#1C1C1E]">
+                          {nominal(section.totalCents, section.negateTotal)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="mt-6">
+              <div className="grid grid-cols-[1fr_auto] px-4 py-3 rounded-xl bg-[#FEF1F3] border border-[#FCC7D2] text-[15px] font-bold items-center">
+                <span className="text-[#C8102E]">
+                  {USER_STRINGS.dashboard.monthlyNetProfit}
+                </span>
+                <span className="tabular-nums text-right pl-3 shrink-0 text-[#059669]">
+                  {nominal(Math.abs(summary.netProfitCents))}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {showDetail ? (
         <div
@@ -291,16 +306,27 @@ export function MonthlyStatementCard({ statement, isFirst = false }: MonthlyStat
                   </span>
                   <span
                     className={cn(
-                      'tabular-nums text-right pl-3 shrink-0',
-                      isNetProfit ? 'text-success-text' : 'text-danger-text',
+                      'tabular-nums text-right pl-3 shrink-0 text-success-text',
                     )}
                   >
-                    {nominal(statement.netProfitCents)}
+                    {nominal(Math.abs(summary.netProfitCents))}
                   </span>
                 </div>
               </div>
             </div>
-            <div className="px-5 py-4 border-t border-border/60">
+            <div className="px-5 py-4 border-t border-border/60 space-y-2">
+              <Button
+                type="button"
+                size="sm"
+                variant="secondary"
+                isBlock
+                isLoading={isDownloading}
+                loadingText={USER_STRINGS.dashboard.pnlCtaDownloading}
+                onClick={handleDownloadPdf}
+                leftIcon={<Download className="h-[18px] w-[18px]" />}
+              >
+                {USER_STRINGS.dashboard.pnlCtaDownloadPdf}
+              </Button>
               <Button type="button" size="lg" isBlock onClick={() => setShowDetail(false)}>
                 Tutup
               </Button>

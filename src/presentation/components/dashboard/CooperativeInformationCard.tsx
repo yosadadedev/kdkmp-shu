@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { FileCheck2, Building2, MapPin, Landmark } from 'lucide-react'
+import { FileCheck2, MapPin, Landmark } from 'lucide-react'
 import { Card } from '@presentation/components/ui/Card'
 import { InfoRow } from '@presentation/components/ui/InfoRow'
 import { AvatarCircle } from '@presentation/components/ui/AvatarCircle'
@@ -70,20 +70,12 @@ export function CooperativeInformationCard({ cooperativeUnit, isLoading }: Coope
       ) : (
         <>
           <div className="flex items-start justify-between gap-3">
-            <div className="flex items-start gap-3 min-w-0 flex-1">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
               <AvatarCircle fullName={cooperativeUnit.branchName} size="xl" tone="brand" />
               <div className="min-w-0 flex-1 pt-1">
                 <h3 className="text-[17px] font-bold leading-6 text-text truncate mb-1">
                   {cooperativeUnit.branchName}
-                </h3>
-                <div className="h-stack gap-1.5 text-xs text-text-muted">
-                  <Building2 className="h-3.5 w-3.5" />
-                  <span className="truncate">{USER_STRINGS.dashboard.infoKdkmp}</span>
-                </div>
-                <div className="h-stack gap-1.5 text-xs text-text-muted mt-0.5">
-                  <FileCheck2 className="h-3.5 w-3.5 shrink-0" />
-                  <span className="truncate">{cooperativeUnit.registrationNumber}</span>
-                </div>
+                </h3> 
               </div>
             </div>
           </div>

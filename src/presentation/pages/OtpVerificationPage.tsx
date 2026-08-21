@@ -26,7 +26,7 @@ export function OtpVerificationPage() {
   const [otpValue, setOtpValue] = useState<string>('')
   const [failureCount, setFailureCount] = useState<number>(0)
   const [shakeKey, setShakeKey] = useState<number>(0)
-  const [expireSeconds, setExpireSeconds] = useState<number>(3 * 60)
+  const [, setExpireSeconds] = useState<number>(3 * 60)
   const [resendCooldownSeconds, setResendCooldownSeconds] = useState<number>(3 * 60)
 
   useEffect(() => {
