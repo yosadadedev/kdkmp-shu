@@ -216,6 +216,10 @@ export const USER_STRINGS = {
     infoMandatorySavings: 'Simpanan Wajib',
     infoVoluntarySavings: 'Simpanan Sukarela',
     infoViewMore: 'Lihat data lainnya',
+    sectionAdminContact: 'Kontak Admin',
+    adminContactSubtitle: 'Hubungi pengurus untuk bantuan & pertanyaan',
+    adminContactWhatsapp: '0857-0000-0000',
+    adminContactEmail: 'pengurus@kdkmp.co.id',
     sectionFaqTitle: 'Pertanyaan yang Sering Ditanyakan',
     faq: [
       {

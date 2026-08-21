@@ -8,6 +8,7 @@ import { CooperativeInformationCard } from '@presentation/components/dashboard/C
 import { FinancialStatementsSection } from '@presentation/components/dashboard/FinancialStatementsSection'
 import { MemberVoteReceiptCard } from '@presentation/components/dashboard/MemberVoteReceiptCard'
 import { FaqAccordionSection } from '@presentation/components/dashboard/FaqAccordionSection'
+import { AdminContactSection } from '@presentation/components/dashboard/AdminContactSection'
 import { Divider } from '@presentation/components/ui/Divider'
 import { Skeleton, SkeletonCard } from '@presentation/components/ui/Skeleton'
 import { BottomNavBar, type BottomNavTab } from '@presentation/components/navigation/BottomNavBar'
@@ -99,6 +100,8 @@ export function DashboardHomePage() {
 
             <Divider spacing="md" label={USER_STRINGS.dashboard.sectionFaqTitle} />
             <FaqAccordionSection />
+
+            <AdminContactSection />
           </div>
         ) : null}
 
