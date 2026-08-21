@@ -7,6 +7,7 @@ import { MemberInformationCard } from '@presentation/components/dashboard/Member
 import { CooperativeInformationCard } from '@presentation/components/dashboard/CooperativeInformationCard'
 import { FinancialStatementsSection } from '@presentation/components/dashboard/FinancialStatementsSection'
 import { MemberVoteReceiptCard } from '@presentation/components/dashboard/MemberVoteReceiptCard'
+import { FaqAccordionSection } from '@presentation/components/dashboard/FaqAccordionSection'
 import { Divider } from '@presentation/components/ui/Divider'
 import { Skeleton, SkeletonCard } from '@presentation/components/ui/Skeleton'
 import { BottomNavBar, type BottomNavTab } from '@presentation/components/navigation/BottomNavBar'
@@ -83,8 +84,6 @@ export function DashboardHomePage() {
 
         {activeTab === 'profile' ? (
           <div className="space-y-4">
-            <ProfitSharingAmountCard record={record} isLoading={isRecordLoading} />
-
             <Divider spacing="md" label={USER_STRINGS.dashboard.sectionMemberData} />
             <MemberInformationCard
               member={member}
@@ -98,15 +97,8 @@ export function DashboardHomePage() {
               isLoading={isProfileLoading}
             />
 
-            {hasVoted ? (
-              <>
-                <Divider spacing="md" label="Bukti Voting" />
-                <MemberVoteReceiptCard
-                  receipt={receipt}
-                  isLoading={isReceiptLoading}
-                />
-              </>
-            ) : null}
+            <Divider spacing="md" label={USER_STRINGS.dashboard.sectionFaqTitle} />
+            <FaqAccordionSection />
           </div>
         ) : null}
 

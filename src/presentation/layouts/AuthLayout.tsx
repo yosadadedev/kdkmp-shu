@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { ChevronLeft } from 'lucide-react'
 import { USER_STRINGS } from '@presentation/constants/userFacingStrings'
 import { cn } from '@presentation/utils/cn'
+import kdkmpLogo from '@/assets/logo-kdkmp.webp'
 
 export interface AuthLayoutProps {
   children: ReactNode
@@ -33,17 +34,18 @@ export function AuthLayout({
         )}
       >
         <div className="h-stack gap-2 min-w-0 flex-1">
-          <div className="h-8 w-8 rounded-lg bg-brand-500 text-white inline-flex items-center justify-center font-extrabold text-sm shrink-0 shadow-[0_2px_8px_rgba(200,16,46,0.3)]">
-            K
+          <div className="h-8 w-8 rounded-lg  overflow-hidden shrink-0 inline-flex items-center justify-center p-0.5">
+            <img
+              src={kdkmpLogo}
+              alt={USER_STRINGS.common.appNameShort}
+              className="h-full w-full object-contain"
+              loading="lazy"
+              decoding="async"
+            />
           </div>
-          <div className="min-w-0 flex-1 v-stack">
             <span className="text-[15px] font-bold leading-5 text-text truncate">
-              {USER_STRINGS.common.appNameShort}
-            </span>
-            <span className="text-[11px] leading-4 text-text-muted truncate">
               {USER_STRINGS.common.appNameFull}
             </span>
-          </div>
         </div>
         {backPath ? (
           <Link

@@ -30,20 +30,20 @@ export const USER_STRINGS = {
     slide1: {
       title: 'Selamat datang di KDKMP SHU',
       description:
-        'Aplikasi mudah untuk memantau simpanan, pinjaman, dan sisa hasil usaha koperasi kapan pun di ponselmu.',
-      illustrationCta: 'Sistem Cepat & Aman',
+        'Aplikasi resmi untuk Partisipasi Rapat Anggota Tahunan & pembagian Sisa Hasil Usaha (SHU) Koperasi KDKMP di ponsel Anda.',
+      illustrationCta: 'Aplikasi Resmi Koperasi',
     },
     slide2: {
-      title: 'Hak suara satu anggota, satu suara',
+      title: 'Alur Voting SHU, Langkah demi Langkah',
       description:
-        'Setiap tahun kamu memilih persetujuan pembagian SHU. Suaramu rahasia & hasilnya transparan untuk semua anggota.',
-      illustrationCta: 'Voting SHU Rahasia',
+        '1️⃣ Masukkan NIK KTP 16 digit → 2️⃣ Verifikasi OTP WhatsApp → 3️⃣ Baca Laporan Keuangan → 4️⃣ Pilih Setuju/Tidak Setuju → 5️⃣ Selesai',
+      illustrationCta: '5 Langkah Super Mudah',
     },
     slide3: {
-      title: 'Data keuangan bulanan transparan',
+      title: 'Aturan Penting Wajib Tahu',
       description:
-        'Lihat laporan PNL bulanan & akumulasi simpananmu sendiri, langsung di dashboard tanpa harus ke kantor koperasi.',
-      illustrationCta: 'Laporan PNL Lengkap',
+        '✅ 1 NIK = HANYA 1 SUARA per tahun buku · ⚠️ Pilihan SUDAH dikirim TIDAK BISA diubah · 🔒 Pilihanmu RAHASIA & tidak bisa dilacak siapa pun. Suara Anda menentukan pembagian SHU yang ADIL.',
+      illustrationCta: 'Pahami dulu sebelum mulai!',
     },
     finalCta: 'Masuk dengan NIK',
   },
@@ -216,6 +216,37 @@ export const USER_STRINGS = {
     infoMandatorySavings: 'Simpanan Wajib',
     infoVoluntarySavings: 'Simpanan Sukarela',
     infoViewMore: 'Lihat data lainnya',
+    sectionFaqTitle: 'Pertanyaan yang Sering Ditanyakan',
+    faq: [
+      {
+        q: 'Apa itu SHU KDKMP?',
+        a: 'SHU adalah Sisa Hasil Usaha Koperasi — laba bersih tahunan yang dibagikan kepada seluruh anggota aktif KDKMP sesuai proporsi simpanan dan jasa usaha anggota.',
+      },
+      {
+        q: 'Siapa yang berhak melakukan voting SHU?',
+        a: 'Setiap anggota KDKMP yang statusnya AKTIF dan terdaftar di unit KDKMP pada tahun buku berjalan berhak memberikan 1 (satu) suara.',
+      },
+      {
+        q: 'Berapa kali saya boleh vote dalam 1 tahun buku?',
+        a: 'Setiap 1 NIK hanya memiliki HAK 1 SUARA untuk 1 sesi tahun buku SHU. Suara yang sudah dikirim TIDAK DAPAT diubah, dibatalkan, atau diulang.',
+      },
+      {
+        q: 'Apakah pilihan voting saya benar-benar rahasia?',
+        a: 'YA. Pilihan Anda dicatat sebagai TOKEN ANONIM (tidak tercantum nama/NIK). Hanya Anda yang tahu pilihan Anda sendiri — pengurus koperasi tidak dapat melihatnya.',
+      },
+      {
+        q: 'Kapan SHU saya cairkan ke rekening?',
+        a: 'Pembagian SHU dilakukan SETELAH hasil voting disetujui pada Rapat Anggota Tahunan (RAT). Pengurus KDKMP akan mengumumkan jadwal pencairan melalui WhatsApp dan papan pengumuman kantor.',
+      },
+      {
+        q: 'Saya lupa/tidak menerima kode OTP, bagaimana?',
+        a: 'Tunggu 3 menit lalu tekan tombol KIRIM ULANG. Jika masih belum masuk, hubungi Pengurus Unit KDKMP terdekat untuk verifikasi nomor WhatsApp terdaftar.',
+      },
+      {
+        q: 'Apa bukti bahwa suara saya sudah diterima?',
+        a: 'Setelah voting berhasil, Anda akan mendapatkan TOKEN ANONIM unik. Simpan token tersebut sebagai bukti sah partisipasi. Token ini juga dapat dilihat di tab Voting kapan saja.',
+      },
+    ] as const,
   },
   voteSuccess: {
     title: 'Suara Kamu Berhasil Dikirim!',
@@ -228,7 +259,7 @@ export const USER_STRINGS = {
     receiptChoiceDisagree: 'Tidak Setuju',
     receiptTime: 'Waktu:',
     receiptYear: 'Tahun Buku:',
-    ctaBackHome: 'Kembali ke Dashboard',
+    ctaBackHome: 'Kembali ke Login',
     copyTokenCta: 'Salin token',
   },
   protectedRoute: {

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ShieldCheck, Vote, BarChart3, ArrowRight, Sparkles } from 'lucide-react'
+import { ShieldCheck, ListOrdered, ShieldAlert, ArrowRight } from 'lucide-react'
 import { AuthLayout } from '@presentation/layouts/AuthLayout'
 import { StepIndicator } from '@presentation/components/ui/StepIndicator'
 import { Button } from '@presentation/components/ui/Button'
@@ -25,7 +25,7 @@ const SLIDES_DEFS = [
   },
   {
     index: 2 as const,
-    Icon: Vote,
+    Icon: ListOrdered,
     title: USER_STRINGS.onboarding.slide2.title,
     description: USER_STRINGS.onboarding.slide2.description,
     ctaTag: USER_STRINGS.onboarding.slide2.illustrationCta,
@@ -34,7 +34,7 @@ const SLIDES_DEFS = [
   },
   {
     index: 3 as const,
-    Icon: BarChart3,
+    Icon: ShieldAlert,
     title: USER_STRINGS.onboarding.slide3.title,
     description: USER_STRINGS.onboarding.slide3.description,
     ctaTag: USER_STRINGS.onboarding.slide3.illustrationCta,
@@ -101,13 +101,8 @@ export function OnboardingPage() {
               )}
               aria-hidden
             >
-              <div className="absolute top-4 right-4 flex items-center gap-1 px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-sm border border-white/25">
-                <Sparkles className="h-3.5 w-3.5" />
-                <span className="text-[11px] font-semibold tracking-wide">Baru</span>
-              </div>
-              <slide.Icon className="h-28 w-28 opacity-95" strokeWidth={1.75} />
-              <div className="absolute bottom-4 left-4 right-4 text-[12px] leading-5 font-semibold text-white/95">
-                {slide.ctaTag}
+              <div className="h-28 w-28 rounded-full bg-white/12 inline-flex items-center justify-center">
+                <slide.Icon className="h-16 w-16" strokeWidth={1.6} />
               </div>
             </div>
           </div>
