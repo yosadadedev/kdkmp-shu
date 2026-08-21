@@ -139,14 +139,14 @@ export function MonthlyStatementCard({
         </div>
 
         <div className="grid grid-cols-2 gap-2.5 mb-3">
-          <div className="rounded-xl bg-surface-muted p-3 space-y-1">
+          <div className="col-span-2 rounded-xl bg-surface-muted p-3 space-y-1">
             <div className="h-stack gap-1 text-[11px] text-text-muted">
               <PiggyBank className="h-3.5 w-3.5" />
               {USER_STRINGS.dashboard.shuAllocationRevenue}
             </div>
             <RupiahText cents={summary.operatingRevenueTotalCents} size="sm" />
           </div>
-          <div className="rounded-xl bg-surface-muted p-3 space-y-1">
+          <div className="col-span-2 rounded-xl bg-surface-muted p-3 space-y-1">
             <div className="h-stack gap-1 text-[11px] text-text-muted">
               <ArrowDownRight className="h-3.5 w-3.5 text-link" />
               {USER_STRINGS.dashboard.shuAllocationOperatingExpense}
@@ -193,7 +193,7 @@ export function MonthlyStatementCard({
         </div>
       </Card>
 
-      <div className="hidden" aria-hidden="true">
+      <div className="fixed -left-[9999px] top-0 pointer-events-none" aria-hidden="true">
         <div ref={pdfContentRef}>
           <div className="w-[780px] bg-white p-6 font-sans">
             <div className="mb-4">

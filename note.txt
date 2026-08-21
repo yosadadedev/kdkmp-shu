@@ -11,3 +11,13 @@
 
 11. Onboarding - VOting SHU KDKMP terkait, flow dll -> ok
 12. faq di profile screen -> ok
+
+
+
+tambahan
+1. Dasar hukum dll di atas opsi vote, teks link -> 
+2. summary omzet dan beban di buat 1 card seperti laba bersih -> ok
+3. Data Detail PDF ->  ok
+4. Profile -> Section KDKMP -> Alamat Kantor diubah Alamat, Avatar KDKMP Remove
+5. Profile -> Section Member -> Unit KDKMP hide dulu, Avatar di hapus
+6. Profile -> Tambah Section Kontak yang bisa dihubungi
