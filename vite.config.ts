@@ -26,7 +26,7 @@ export default defineConfig({
     host: true,
     port: 5173,
     strictPort: false,
-    allowedHosts: ['.ngrok-free.dev', '.ngrok-free.app'],
+    allowedHosts: ['.ngrok-free.dev', '.ngrok-free.app', 'slacked-kitten-drench.ngrok-free.dev'],
   },
   preview: {
     host: true,
