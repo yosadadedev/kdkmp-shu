@@ -7,6 +7,7 @@ import { ErrorCode } from '@infra/errors/ErrorCode'
 import { RoutePaths } from '@presentation/constants/routePaths'
 import { useToast } from '@presentation/hooks/useToast'
 import { maskNationalId } from '@presentation/utils/formatters'
+import { normalizeNationalId } from '@domain/value-objects/NationalId'
 
 export interface UseSendOtpResult {
   isLoading: boolean
@@ -17,6 +18,7 @@ export function useSendOtp(): UseSendOtpResult {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const setOtpSession = useAuthStore((s) => s.setActiveOtpSession)
   const setLastNationalIdMasked = useAuthStore((s) => s.setLastNationalIdMasked)
+  const setPendingNationalIdPlain = useAuthStore((s) => s.setPendingNationalIdPlain)
   const navigate = useNavigate()
   const toast = useToast()
 
@@ -27,6 +29,7 @@ export function useSendOtp(): UseSendOtpResult {
         const result = await getUseCases().sendOtp.execute(nationalIdPlain)
         setOtpSession(result.session)
         setLastNationalIdMasked(maskNationalId(nationalIdPlain))
+        setPendingNationalIdPlain(normalizeNationalId(nationalIdPlain))
         toast.info('Kode OTP terkirim', `Kode OTP dikirim ke ${result.session.maskDestination}`)
         navigate(RoutePaths.OTP_VERIFICATION, { replace: true })
         return { success: true }
@@ -38,7 +41,7 @@ export function useSendOtp(): UseSendOtpResult {
         setIsLoading(false)
       }
     },
-    [navigate, setLastNationalIdMasked, setOtpSession, toast],
+    [navigate, setLastNationalIdMasked, setOtpSession, setPendingNationalIdPlain, toast],
   )
 
   return { isLoading, sendOtp }

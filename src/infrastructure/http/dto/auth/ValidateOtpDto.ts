@@ -1,12 +1,12 @@
 import type { ApiResponseEnvelope } from '@infra/http/dto/ApiResponseEnvelope'
 
 export interface ValidateOtpRequestDto {
+  nik: string
   otp: string
 }
 
 export interface ValidateOtpDataDto {
-  user_nik: string
-  company_nik: string
+  access_token: string
 }
 
 export type ValidateOtpResponseDto = ApiResponseEnvelope<ValidateOtpDataDto>

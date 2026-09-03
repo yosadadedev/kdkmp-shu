@@ -41,17 +41,20 @@ export interface HttpClientConfig {
   baseUrl?: string
   defaultTimeoutMs?: number
   authTokenProvider?: () => string | null
+  onUnauthorized?: () => void
 }
 
 export class HttpClient {
   private readonly baseUrl: string
   private readonly defaultTimeoutMs: number
   private readonly authTokenProvider?: () => string | null
+  private readonly onUnauthorized?: () => void
 
   constructor(config: HttpClientConfig = {}) {
     this.baseUrl = config.baseUrl ?? ''
     this.defaultTimeoutMs = config.defaultTimeoutMs ?? DEFAULT_TIMEOUT_MS
     this.authTokenProvider = config.authTokenProvider
+    this.onUnauthorized = config.onUnauthorized
   }
 
   async request<T>(path: string, init: HttpRequestInit = {}): Promise<HttpResponseEnvelope<T>> {
@@ -89,6 +92,7 @@ export class HttpClient {
       }
 
       if (!response.ok) {
+        if (response.status === 401) this.onUnauthorized?.()
         throw createAppError(ErrorCode.NETWORK_ERROR, {
           meta: { status: response.status, statusText: response.statusText, url: finalUrl, data },
         })

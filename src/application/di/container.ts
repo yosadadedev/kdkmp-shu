@@ -16,6 +16,9 @@ import { HttpReportRepository } from '@infra/repositories/http/HttpReportReposit
 import { HttpGateRepository } from '@infra/repositories/http/HttpGateRepository'
 import { HttpClient } from '@infra/http/HttpClient'
 import { env } from '@infra/config/env'
+import { SecureStorage } from '@infra/storage/SecureStorage'
+import { StorageKeys } from '@infra/storage/StorageKeys'
+import { useUiStore } from '../stores/UiStore'
 
 import { SendOtpUseCase } from '../use-cases/auth/SendOtpUseCase'
 import { VerifyOtpUseCase } from '../use-cases/auth/VerifyOtpUseCase'
@@ -80,6 +83,24 @@ const singletonHttpClient = new HttpClient({
       return useAuthStore.getState().session?.authToken ?? null
     } catch {
       return null
+    }
+  },
+  // A 401 means the token the backend just rejected can no longer be
+  // trusted for anything else — force a full local logout (storage +
+  // in-memory store) so `ProtectedRoute` picks up `isAuthenticated: false`
+  // and redirects to login on its own, without a hard page reload.
+  onUnauthorized: () => {
+    try {
+      SecureStorage.remove(StorageKeys.AUTHENTICATED_SESSION)
+      useAuthStore.getState().clearAuthenticated()
+      useUiStore.getState().pushToast({
+        variant: 'warning',
+        titleId: 'Sesi berakhir',
+        messageId: 'Silakan masuk kembali untuk melanjutkan.',
+        durationMs: 3200,
+      })
+    } catch {
+      // best-effort cleanup — nothing else to do if storage/store access fails
     }
   },
 })

@@ -24,6 +24,7 @@ export function useVerifyOtp(): UseVerifyOtpResult {
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const updateSession = useAuthStore((s) => s.updateActiveOtpSession)
   const setAuthenticated = useAuthStore((s) => s.setAuthenticated)
+  const pendingNationalIdPlain = useAuthStore((s) => s.pendingNationalIdPlain)
   const navigate = useNavigate()
   const toast = useToast()
 
@@ -38,7 +39,7 @@ export function useVerifyOtp(): UseVerifyOtpResult {
     }> => {
       setIsLoading(true)
       try {
-        const result = await getUseCases().verifyOtp.execute(sessionId, otpCode)
+        const result = await getUseCases().verifyOtp.execute(sessionId, otpCode, pendingNationalIdPlain ?? '')
         if (result.isVerified) {
           const authSession = await getUseCases().restoreSession.execute()
           if (authSession) {
@@ -72,7 +73,7 @@ export function useVerifyOtp(): UseVerifyOtpResult {
         setIsLoading(false)
       }
     },
-    [navigate, setAuthenticated, toast, updateSession],
+    [navigate, pendingNationalIdPlain, setAuthenticated, toast, updateSession],
   )
 
   return { isLoading, verifyOtp }

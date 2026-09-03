@@ -49,16 +49,14 @@ export class HttpAuthRepository implements AuthRepository {
     return this.fallback.sendOtpByNationalId(normalized)
   }
 
-  async verifyOtpCode(sessionId: string, otpCode: string): Promise<VerifyOtpResult> {
-    let userNik: string | undefined
-    let companyNik: string | undefined
+  async verifyOtpCode(sessionId: string, otpCode: string, nationalIdNikPlain: string): Promise<VerifyOtpResult> {
+    let accessToken: string | undefined
     try {
-      const result = await validateOtp(this.httpClient, { otp: otpCode })
+      const result = await validateOtp(this.httpClient, { nik: nationalIdNikPlain, otp: otpCode })
       if (!result.success) {
         throw createAppError(ErrorCode.OTP_CODE_INVALID, { meta: { message: result.message } })
       }
-      userNik = result.data.user_nik
-      companyNik = result.data.company_nik
+      accessToken = result.data.access_token
     } catch (err) {
       // Same reasoning as sendOtpByNationalId: a response the server actually
       // sent (has an HTTP status) but flagged as failed means the OTP is
@@ -77,16 +75,23 @@ export class HttpAuthRepository implements AuthRepository {
     // backend has confirmed the user's code, swap in the dev code here
     // rather than passing the user's code straight through — otherwise the
     // mock would reject an already-confirmed-correct OTP as invalid.
-    const result = await this.fallback.verifyOtpCode(sessionId, MOCK_OTP_CODE_FOR_DEV)
+    const result = await this.fallback.verifyOtpCode(sessionId, MOCK_OTP_CODE_FOR_DEV, nationalIdNikPlain)
 
     // The mock builds its own (fake) AuthenticatedSession as part of
-    // verification above — patch in the real user_nik/company_nik the
-    // backend just confirmed so anything reading the stored session
-    // (e.g. the voting payload) gets real values instead of the mock's.
-    if (result.isVerified && userNik !== undefined && companyNik !== undefined) {
+    // verification above — patch in the real access_token the backend just
+    // confirmed (used as the Authorization header via authTokenProvider),
+    // plus userNik from the already-validated login NIK, so anything reading
+    // the stored session gets real values instead of the mock's. The
+    // validate-otp response no longer returns company_nik, so that field is
+    // left as whatever the fallback session already carries.
+    if (result.isVerified && accessToken !== undefined) {
       const authSession = await this.fallback.loadAuthenticatedSession()
       if (authSession) {
-        await this.fallback.storeAuthenticatedSession({ ...authSession, userNik, companyNik })
+        await this.fallback.storeAuthenticatedSession({
+          ...authSession,
+          userNik: nationalIdNikPlain,
+          authToken: accessToken,
+        })
       }
     }
 
